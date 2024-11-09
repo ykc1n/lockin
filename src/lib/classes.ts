@@ -1,8 +1,8 @@
 export default class Hotkey{
     name:string;
     keys: string[];
-    sequential: boolean = true; //TRUE: each key must be pressed in order FALSE: keys can be pressed in any order
-    combinatory:boolean = true; //TRUE: need to hold every key FALSE: each key must be pressed once
+    sequential = true; //TRUE: each key must be pressed in order FALSE: keys can be pressed in any order
+    combinatory = true; //TRUE: need to hold every key FALSE: each key must be pressed once
 
     constructor( newKeys:string[], name:string,  ordered: boolean, combinatory:boolean){
       this.keys = newKeys;
@@ -14,8 +14,8 @@ export default class Hotkey{
 
   
     displayKeys():string {
-     let returnString:string = ""
-     let seperator = !this.combinatory? "->" : "+";
+     let returnString= ""
+     const seperator = !this.combinatory? "->" : "+";
   
      for(let i = 0;i<this.keys.length;i++){
       returnString = 

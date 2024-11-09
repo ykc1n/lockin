@@ -17,14 +17,14 @@ import { check } from "prettier";
 //   }
 // }
 
-let hotkeys = defaultPresets[0].hotkeys 
+const hotkeys = defaultPresets[0].hotkeys 
 //const hotkeys:Hotkey[] = tuple(defaultPresets[0].hotkeys);
 let keysPressed: string[] = [];
-let test = hotkeys[1]
-let keysToMatch: string[] = [];
+const test = hotkeys[1]
+const keysToMatch: string[] = [];
 //let curTime = Date.now;
 function getRandomHotkeyIndex(hotkeys:Hotkey[]):number {
-  let randomIndex:number = Math.floor( Math.random() * (hotkeys.length)) 
+  const randomIndex:number = Math.floor( Math.random() * (hotkeys.length)) 
   return randomIndex;
 }
 
@@ -32,7 +32,7 @@ function getRandomHotkeyIndex(hotkeys:Hotkey[]):number {
 export default function HomePage() {
 
   const [curHotkey, setCurHotkey] = useState<Hotkey>(getRandomHotkey())
-  const [keysPressedString, setKeysPressed] = useState<String>("")
+  const [keysPressedString, setKeysPressed] = useState<string>("")
   const [score, setScore] = useState<number>(0);
   const [time, setTime] = useState<number>(0);
   const keyToMatchIndex = useRef<number>(0)
@@ -47,7 +47,7 @@ export default function HomePage() {
     // })
     // console.log(newHotkeys);
     //let randomHotkey = newHotkeys[getRandomHotkeyIndex(newHotkeys)];
-    let randomHotkey = hotkeys[getRandomHotkeyIndex(hotkeys)];
+    const randomHotkey = hotkeys[getRandomHotkeyIndex(hotkeys)];
     return randomHotkey!
     // console.log("new hotkey: "+ randomHotkey?.name);
     // if(randomHotkey instanceof Hotkey){
@@ -59,12 +59,12 @@ export default function HomePage() {
 
 
   function setRandomHotkey(){
-    let newHotkeys = hotkeys.filter((hotkey)=>{
+    const newHotkeys = hotkeys.filter((hotkey)=>{
       return hotkey.name != curHotkey.name;
     })
     console.log(newHotkeys);
 
-    let randomHotkey = newHotkeys[getRandomHotkeyIndex(newHotkeys)];
+    const randomHotkey = newHotkeys[getRandomHotkeyIndex(newHotkeys)];
     console.log("new hotkey: "+ randomHotkey?.name);
     if(randomHotkey instanceof Hotkey){
       setCurHotkey(randomHotkey);
@@ -74,7 +74,7 @@ export default function HomePage() {
   }
 
   function displayKeysPressed(){
-    let returnString:string = ""
+    let returnString = ""
   
     for(let i = 0; i<keysPressed.length;i++){
       returnString += keysPressed[i] + (i==keysPressed.length-1 ? "" : " -> ");
@@ -84,7 +84,7 @@ export default function HomePage() {
   }
 
   function checkHotkeySequential(keyPressed:string){
-      let curHotkeys:string[] = curHotkey.keys;
+      const curHotkeys:string[] = curHotkey.keys;
       console.log(`checking at curhotkeys [${keyToMatchIndex.current}]`)
       if(keyPressed != curHotkeys[keyToMatchIndex.current]) return;
 
@@ -110,7 +110,7 @@ export default function HomePage() {
 
 
   function checkKeysPressed(){
-    let curHotkeys:string[] = curHotkey.keys;
+    const curHotkeys:string[] = curHotkey.keys;
 
     if(keysPressed.length == curHotkeys.length) correctHotkey()
 
@@ -146,8 +146,8 @@ export default function HomePage() {
     */
   function handleKeyDown(event: KeyboardEvent){
     
-    let keysToMatch:string = event.key; 
-    let curHotkeys:string[] = curHotkey.keys;
+    const keysToMatch:string = event.key; 
+    const curHotkeys:string[] = curHotkey.keys;
 
    
     // *sequential hotkey
