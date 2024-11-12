@@ -6,7 +6,8 @@ import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import Hotkey, { HotkeySet } from '../../lib/classes'
 import Navbar from "~/components/navbar";
 import { defaultPresets } from "~/lib/defaults";
-import { check } from "prettier";
+import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 
 
 
@@ -17,20 +18,30 @@ import { check } from "prettier";
 //   }
 // }
 
-const hotkeys = defaultPresets[0].hotkeys 
+ 
 //const hotkeys:Hotkey[] = tuple(defaultPresets[0].hotkeys);
-let keysPressed: string[] = [];
-const test = hotkeys[1]
-const keysToMatch: string[] = [];
+
 //let curTime = Date.now;
 function getRandomHotkeyIndex(hotkeys:Hotkey[]):number {
   const randomIndex:number = Math.floor( Math.random() * (hotkeys.length)) 
   return randomIndex;
 }
 
+function searchHotkeysByName(hotkeys:HotkeySet[], nameToSearch:string){
+ for (const hotkeyset of hotkeys){
+  if(hotkeyset.name == nameToSearch) return hotkeyset
+ }
+ return defaultPresets[0]
+}
+let keysPressed: string[] = [];
+
 
 export default function HomePage() {
-
+  
+  const searchParams = useSearchParams();
+  const curHotkeySetName = searchParams.get('hotkeySet')??" "
+  const curHotkeySet = searchHotkeysByName(defaultPresets,curHotkeySetName)
+  const hotkeys = curHotkeySet.hotkeys
   const [curHotkey, setCurHotkey] = useState<Hotkey>(getRandomHotkey())
   const [keysPressedString, setKeysPressed] = useState<string>("")
   const [score, setScore] = useState<number>(0);
@@ -196,15 +207,20 @@ export default function HomePage() {
       
       <div>
 
-        <h1 className="text-6xl text-center font-bold  py-6"> Play</h1>
+        <h1 className="text-3xl text-center font-bold  py-6"> {curHotkeySet.name}</h1>
 
       <div className="flex justify-center">
-        <div className=" text-center text-3xl py-12">
-                <div>{curHotkey.name}</div>
-                <div className="py-6">{curHotkey.displayKeys()}</div>
-                <div className="py-12">{keysPressedString}</div>
-                <div className="py-12">{score}</div>
-                <div className="py-6">{time/1000}s</div>
+          <div className=" text-center text-3xl py-12">
+            <div className="bg-slate-950 rounded-xl bg-opacity-40 mb-5 pt-8 min-w-64">
+              <div>{curHotkey.name}</div>
+              <div className="py-6">{curHotkey.displayKeys()}</div>
+              <div className="py-12">{keysPressedString}</div>
+            </div>
+            <div className=" bg-slate-950 rounded-xl bg-opacity-40 p-2">
+              <div className="py-12">Score: {score}</div>
+              <div className="py-6"> Completion Time {time / 1000}s</div>
+            </div>
+
           </div>
 
 

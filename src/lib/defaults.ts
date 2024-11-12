@@ -17,16 +17,13 @@ const test1:Hotkey = new Hotkey(["z","z"],"Test 1", true, false);
 const test2:Hotkey = new Hotkey(["c","x","c"],"Test 2", true, false);
 const test3:Hotkey = new Hotkey(["z","w","v","x"],"Test 3", true, true);
 
-const test:HotkeySet = new HotkeySet("Testing",[
-    test1
-    ,test2
-    ,
-    test3
-    
-])
+const testHotkeys = [test1,
+    test2,
+    test3]
 
-const barT1EcoGridKeys:HotkeySet = new HotkeySet("BAR T1 Economy Hotkeys", [Solar, Wind, AdvancedSolar, Converter]);
-const barT1DefenseGridKeys:HotkeySet = new HotkeySet("BAR T1 Defense Hotkeys",[LLT, DoubleLLT, Claw, AA]);
+const test:HotkeySet = new HotkeySet("Testing",testHotkeys, true)
+const barT1EcoGridKeys:HotkeySet = new HotkeySet("BAR T1 Economy Hotkeys Default", [Solar, Wind, AdvancedSolar, Converter], true);
+const barT1DefenseGridKeys:HotkeySet = new HotkeySet("BAR T1 Defense Hotkeys Default",[LLT, DoubleLLT, Claw, AA], true);
 
 export const defaultPresets:[HotkeySet, HotkeySet, HotkeySet] = [barT1EcoGridKeys, barT1DefenseGridKeys, test];
 

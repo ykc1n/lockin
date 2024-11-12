@@ -3,10 +3,11 @@
 import Hotkey, { HotkeySet } from '../../lib/classes'
 import { defaultPresets } from "~/lib/defaults";
 import PlusIcon from '../../../public/plus.svg'
+import { CSSProperties } from 'react';
 
 function HotkeySetButton({text}: {text:string}){
     return (
-        <button className='border rounded-md px-2 py-1 hover:bg-teal-200 hover:text-teal-800'>
+        <button className='bg-cyan-950 rounded-md px-2 py-1 hover:bg-teal-200 hover:text-teal-800 transition-all'>
                        {text}
                     </button>
     )
@@ -14,12 +15,16 @@ function HotkeySetButton({text}: {text:string}){
 
 
 
-function HotkeySetCard(){
+function HotkeySetCard({hotkeyset}: {hotkeyset:HotkeySet}){
+    const fixedScrollbar:CSSProperties = {
+        scrollbarWidth: "thin",
+        scrollbarColor: "#083344 #00000000"
+    } 
     return(
-        <div className='border border-teal-400 rounded-md w-64 h-32 text-cyan-300 p-2 relative m-5'>
-            <p className='text-2xl'> Hotkey Set 1</p>
-            <p className='text-m text-cyan-300'> N hotkeys  </p>
-            <div className='flex justify-center gap-1 absolute bottom-0 p-in text-teal-300' style={
+        <div className=' bg-slate-950 bg-opacity-40 rounded-md w-64 h-32 text-cyan-300 p-2 relative m-5'>
+            <p className='text-xl overflow-auto text-nowrap' style={fixedScrollbar}>  {hotkeyset.name}</p>
+            <p className='text-m text-cyan-300'> {hotkeyset.hotkeys.length} Hotkeys </p>
+            <div className='flex justify-center gap-2 absolute bottom-0 p-in text-teal-300' style={
                 {
                     padding: "inherit"
                 }
@@ -36,20 +41,23 @@ function HotkeySetCard(){
 }
 
 export default function HomePage(){
+
+    const hotkeysetCards = defaultPresets.map(
+        hotkeySet =>
+            <HotkeySetCard hotkeyset={hotkeySet} key={hotkeySet.name}/>
+    )
+
     return(
         <main className="min-h-screen">
             <div className="m-5  text-l ">
-                <button className='border rounded-md px-3 py-2 hover:bg-teal-200 hover:text-teal-800 text-cyan-300 float-end flex'>
+                <button className='bg-cyan-950  rounded-md px-3 py-2 hover:bg-teal-200 hover:text-teal-800 text-cyan-300 transition-all float-end flex'>
                         Add Hotkey Set
-                        <img src="/plus.svg" color='#00000' alt="" />
             </button>
             
             </div>
         
             <div className="flex">
-                <HotkeySetCard/>
-                <HotkeySetCard/>
-                <HotkeySetCard/>
+                {hotkeysetCards}
             </div>
                 
         </main>
