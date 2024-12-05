@@ -5,7 +5,7 @@ import type { HotkeySet } from '../../lib/classes'
 import { defaultPresets } from "~/lib/defaults";
 import { useRouter } from "next/navigation";
 import {  useSearchParams } from "next/navigation";
-
+import { Suspense } from "react";
 
 
 
@@ -270,6 +270,7 @@ export default function HomePage() {
 
 
   return (
+    <Suspense>
     <main className="text-teal-300 min-h-screen">
 
       
@@ -302,5 +303,6 @@ export default function HomePage() {
       </div>
 
     </main>
+    </Suspense>
   );
 }

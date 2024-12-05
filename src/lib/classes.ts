@@ -42,9 +42,10 @@ export default class Hotkey{
   export class HotkeySet{
     name:string;
     hotkeys: Hotkey[];
-
-    constructor(name:string,hotkeys:Hotkey[]){
+    default=false; 
+    constructor(name:string,hotkeys:Hotkey[],Isdefault=false){
       this.name = name; 
       this.hotkeys = hotkeys; 
+      this.default = Isdefault;
     }
   }
