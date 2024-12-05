@@ -1,9 +1,9 @@
 
 'use client'
-import Hotkey, { HotkeySet } from '../../lib/classes'
+
+import type { HotkeySet } from '../../lib/classes'
 import { defaultPresets } from "~/lib/defaults";
-import PlusIcon from '../../../public/plus.svg'
-import { CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 
 function HotkeySetButton({text}: {text:string}){
     return (

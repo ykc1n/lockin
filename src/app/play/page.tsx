@@ -1,13 +1,10 @@
 "use client"
-import { clear } from "console";
-import Link from "next/link";
-import { arch } from "os";
-import { MouseEventHandler, useEffect, useRef, useState } from "react";
-import Hotkey, { HotkeySet } from '../../lib/classes'
-import Navbar from "~/components/navbar";
+import {  useEffect, useRef, useState } from "react";
+import Hotkey from '../../lib/classes'
+import type { HotkeySet } from '../../lib/classes'
 import { defaultPresets } from "~/lib/defaults";
-import { useRouter } from "next/router";
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import {  useSearchParams } from "next/navigation";
 
 
 
@@ -36,19 +33,25 @@ function searchHotkeysByName(hotkeys:HotkeySet[], nameToSearch:string){
 let keysPressed: string[] = [];
 
 
+let playing = false
 export default function HomePage() {
-  
+  const router = useRouter()
   const searchParams = useSearchParams();
   const curHotkeySetName = searchParams.get('hotkeySet')??" "
+  const challengeLength = parseInt(searchParams.get('time')??"30")
   const curHotkeySet = searchHotkeysByName(defaultPresets,curHotkeySetName)
   const hotkeys = curHotkeySet.hotkeys
   const [curHotkey, setCurHotkey] = useState<Hotkey>(getRandomHotkey())
   const [keysPressedString, setKeysPressed] = useState<string>("")
   const [score, setScore] = useState<number>(0);
-  const [time, setTime] = useState<number>(0);
+  //const [time, setTime] = useState<number>(0);
   const keyToMatchIndex = useRef<number>(0)
-  const startTime = useRef<number>(Date.now());
+ // const startTime = useRef<number>(Date.now());
+  const totalKeysCorrect = useRef<number>(0)
+  const totalKeysMissed = useRef<number>(0)
 
+
+  const [timer,setTimer] = useState<number>(challengeLength)
 
   //TODO: Fix unsafe code
   function getRandomHotkey():Hotkey {
@@ -66,6 +69,32 @@ export default function HomePage() {
     // }
   }
 
+ 
+
+// function gameTimer(){
+//   console.log("helo")
+
+//   if(!playing){
+//     return
+//   }
+ 
+//  setTimer( timer => timer -1)
+//  console.log(timer)
+//  if(timer <= 0 ){
+//   playing=false;
+//   setTimer(0)
+//   endGame()
+//  }
+// }
+
+// function endGame(){
+//   console.log("win!")
+//   router.push("/results")
+
+
+
+// }
+
 
 
 
@@ -73,13 +102,13 @@ export default function HomePage() {
     const newHotkeys = hotkeys.filter((hotkey)=>{
       return hotkey.name != curHotkey.name;
     })
-    console.log(newHotkeys);
+    //console.log(newHotkeys);
 
     const randomHotkey = newHotkeys[getRandomHotkeyIndex(newHotkeys)];
-    console.log("new hotkey: "+ randomHotkey?.name);
+    //console.log("new hotkey: "+ randomHotkey?.name);
     if(randomHotkey instanceof Hotkey){
       setCurHotkey(randomHotkey);
-      console.log(randomHotkey.name);
+      //console.log(randomHotkey.name);
     }
   
   }
@@ -96,10 +125,12 @@ export default function HomePage() {
 
   function checkHotkeySequential(keyPressed:string){
       const curHotkeys:string[] = curHotkey.keys;
-      console.log(`checking at curhotkeys [${keyToMatchIndex.current}]`)
-      if(keyPressed != curHotkeys[keyToMatchIndex.current]) return;
+     // console.log(`checking at curhotkeys [${keyToMatchIndex.current}]`)
+      if(keyPressed != curHotkeys[keyToMatchIndex.current]){ totalKeysMissed.current++; setScore(score=>score-4); return}
 
       keysPressed.push(keyPressed);
+      totalKeysCorrect.current++
+      console.log(totalKeysCorrect.current)
       keyToMatchIndex.current++
 
       checkKeysPressed();
@@ -115,8 +146,8 @@ export default function HomePage() {
     keysPressed = [];
     setScore(score => score + 10);
     setRandomHotkey()
-    setTime(Date.now() - startTime.current)
-    startTime.current = Date.now();
+    // setTime(Date.now() - startTime.current)
+    // startTime.current = Date.now();
   }
 
 
@@ -157,42 +188,69 @@ export default function HomePage() {
     */
   function handleKeyDown(event: KeyboardEvent){
     
-    const keysToMatch:string = event.key; 
-    const curHotkeys:string[] = curHotkey.keys;
+    //const keysToMatch:string = event.key; 
+    //const curHotkeys:string[] = curHotkey.keys;
 
+    if(!playing){
+      playing = true
+    }
+    //console.log(playing)
    
     // *sequential hotkey
     if (curHotkey.sequential) checkHotkeySequential(event.key);
 
     event.preventDefault()
-    console.log(keysPressed);
-    console.log(curHotkey.name);
-    currentState()
+    //console.log(keysPressed);
+    //console.log(curHotkey.name);
+   
     displayKeysPressed()
   }
 
-  function currentState(){
-    console.log("current state: "+curHotkey.name);
-  }
   
   function handleKeyUp(event: KeyboardEvent){
-    console.log(event.key)
+    //console.log(event.key)
 
     if(!curHotkey.combinatory || !keysPressed.includes(event.key)) return;
 
     keysPressed = [];
     keyToMatchIndex.current = 0
-    console.log(keysPressed);
+    //console.log(keysPressed);
     displayKeysPressed()
   
   
   }
 
+  useEffect( () =>{
 
+    function gameTimer(){
+      console.log("helo")
+    
+      if(!playing){
+        return
+      }
+     
+     setTimer( timer => timer -1)
+     //console.log(timer)
+     if(timer <= 0 ){
+      playing=false;
+      setTimer(0)
+      console.log("win!")
+      localStorage.setItem("keysCorrect",totalKeysCorrect.current.toString())
+      localStorage.setItem("keysMissed",totalKeysMissed.current.toString())
+      router.push("/results")
+     }
+    }
+    
 
+    const id = setInterval(gameTimer,1000)
+    return () =>{
+      window.clearInterval(id)
 
+    }
 
-  useEffect(() =>{
+  },[timer,router])
+
+  useEffect( () =>{
     window.addEventListener('keydown',handleKeyDown)
     window.addEventListener('keyup',handleKeyUp)
     return () =>{
@@ -200,6 +258,16 @@ export default function HomePage() {
       window.removeEventListener('keyup',handleKeyUp);
     }
   })
+
+
+
+
+
+  useEffect(() =>{
+    localStorage.setItem("score", score.toString())
+  },[score])
+
+
 
   return (
     <main className="text-teal-300 min-h-screen">
@@ -218,7 +286,7 @@ export default function HomePage() {
             </div>
             <div className=" bg-slate-950 rounded-xl bg-opacity-40 p-2">
               <div className="py-12">Score: {score}</div>
-              <div className="py-6"> Completion Time {time / 1000}s</div>
+              <div className="py-6"> {timer}</div>
             </div>
 
           </div>
